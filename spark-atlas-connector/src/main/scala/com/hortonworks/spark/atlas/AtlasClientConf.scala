@@ -71,8 +71,8 @@ val properties = new Properties
 properties.load(inputFile)
 val encoder=Base64.getEncoder
 val decoder=Base64.getDecoder
-val user = properties.getProperty("atlas.client.username")
-val pass = properties.getProperty("atlas.client.password")
+val user = properties.getProperty("atlas.client.username.code")
+val pass = properties.getProperty("atlas.client.password.code")
 val client = properties.getProperty("atlas.client.type")
 val decoded_user=decoder.decode(user).map(_.toChar).mkString
 val decoded_pass=decoder.decode(pass).map(_.toChar).mkString
