@@ -19,6 +19,9 @@ package com.hortonworks.spark.atlas
 
 import org.apache.atlas.ApplicationProperties
 import com.hortonworks.spark.atlas.AtlasClientConf.ConfigEntry
+import java.io.{InputStream,FileInputStream}
+import java.util.Properties
+import java.util.Base64
 
 class AtlasClientConf {
 
@@ -62,9 +65,28 @@ object AtlasClientConf {
   val BLOCKING_QUEUE_CAPACITY = ConfigEntry("atlas.blockQueue.size", "10000")
   val BLOCKING_QUEUE_PUT_TIMEOUT = ConfigEntry("atlas.blockQueue.putTimeout.ms", "3000")
 
-  val CLIENT_TYPE = ConfigEntry("atlas.client.type", "kafka")
-  val CLIENT_USERNAME = ConfigEntry("atlas.client.username", "admin")
-  val CLIENT_PASSWORD = ConfigEntry("atlas.client.password", "admin123")
+
+val inputFile = new FileInputStream("/usr/hdp/2.6.5.0-292/spark2/conf/atlas-application.properties")
+val properties = new Properties
+properties.load(inputFile)
+val encoder=Base64.getEncoder
+val decoder=Base64.getDecoder
+val user = properties.getProperty("atlas.client.username")
+val pass = properties.getProperty("atlas.client.password")
+val client = properties.getProperty("atlas.client.type")
+val decoded_user=decoder.decode(user).map(_.toChar).mkString
+val decoded_pass=decoder.decode(pass).map(_.toChar).mkString
+
+  
+  //val CLIENT_TYPE = ConfigEntry("atlas.client.type", "kafka")
+ // val CLIENT_USERNAME = ConfigEntry("atlas.client.username", "admin")
+ // val CLIENT_PASSWORD = ConfigEntry("atlas.client.password", "admin123")
+
+  val CLIENT_TYPE = ConfigEntry("atlas.client.type", client)
+  val CLIENT_USERNAME = ConfigEntry("atlas.client.username", decoded_user)
+  val CLIENT_PASSWORD = ConfigEntry("atlas.client.password", decoded_pass)
+
+
   val CLIENT_NUM_RETRIES = ConfigEntry("atlas.client.numRetries", "3")
 
   val CLUSTER_NAME = ConfigEntry("atlas.cluster.name", "primary")
